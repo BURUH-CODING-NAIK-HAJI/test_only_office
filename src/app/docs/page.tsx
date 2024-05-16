@@ -1,11 +1,34 @@
-import React from "react";
-import { OnlyOffice } from "./components";
+"use client";
+import React, { useEffect } from "react";
 
 const DocsPage = () => {
+  const config = {
+    mode: "editor",
+    width: "100%",
+    height: "100%",
+    frameId: "ds-frame",
+    init: true,
+    id: 6,
+    token:
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkb2N1bWVudCI6eyJmaWxlVHlwZSI6ImRvY3giLCJpbmZvIjp7ImZvbGRlciI6Ik15IGRvY3VtZW50cyIsIm93bmVyIjoiTWUiLCJzaGFyaW5nU2V0dGluZ3MiOlt7InVzZXIiOiJNZSIsInBlcm1pc3Npb25zIjoiRnVsbCBBY2Nlc3MiLCJpc0xpbmsiOmZhbHNlfV0sInR5cGUiOjAsInVwbG9hZGVkIjoiMDUvMTUvMjAyNCAxMToyNiJ9LCJpc0xpbmtlZEZvck1lIjpmYWxzZSwia2V5IjoielBmSld2NmJzMl81elhieW5jN0FIOEZYNXZMcnZKdlhkNzFxSnNLcDNsTV8iLCJwZXJtaXNzaW9ucyI6eyJjaGFuZ2VIaXN0b3J5Ijp0cnVlLCJjb21tZW50Ijp0cnVlLCJkb3dubG9hZCI6dHJ1ZSwiZWRpdCI6dHJ1ZSwiZmlsbEZvcm1zIjpmYWxzZSwibW9kaWZ5RmlsdGVyIjp0cnVlLCJwcmludCI6dHJ1ZSwicmVuYW1lIjp0cnVlLCJyZXZpZXciOnRydWUsImNvcHkiOnRydWV9LCJyZWZlcmVuY2VEYXRhIjp7ImZpbGVLZXkiOjcsImluc3RhbmNlSWQiOiIxIn0sInRpdGxlIjoiRU1QVFkuZG9jeCIsInVybCI6Imh0dHBzOi8vb2ZmaWNlLm15cGdlLmlkOjQ0My9maWxlaGFuZGxlci5hc2h4P2FjdGlvbj1zdHJlYW1cdTAwMjZmaWxlaWQ9N1x1MDAyNnN0cmVhbV9hdXRoPTQ1MzQ0MzUxNzk4OC5VVFM1SUJIUUFJNjhVVTdCV0pNV0daMERFVzVMQlIyT1RKRE9aRDdWNTAifSwiZG9jdW1lbnRUeXBlIjoid29yZCIsImVkaXRvckNvbmZpZyI6eyJjYWxsYmFja1VybCI6Imh0dHBzOi8vb2ZmaWNlLm15cGdlLmlkOjQ0My9maWxlaGFuZGxlci5hc2h4P2FjdGlvbj10cmFja1x1MDAyNmZpbGVpZD03XHUwMDI2c3RyZWFtX2F1dGg9NDUzNDQzNTE3OTg5LldCQ0ZYWURMU1VVNUhLOUVQUlBJUExDR1VJVk5UTVczVlhSRU4xTk1RS1x1MDAyNnJlcXVlc3QteC1yZWFsLWlwPTE4MC4yNTIuNjEuOThcdTAwMjZyZXF1ZXN0LXVzZXItYWdlbnQ9aW5zb21uaWElMmYyMDIzLjUuOCIsImNyZWF0ZVVybCI6Imh0dHBzOi8vb2ZmaWNlLm15cGdlLmlkL2ZpbGVoYW5kbGVyLmFzaHg_YWN0aW9uPWNyZWF0ZVx1MDAyNmRvY3R5cGU9d29yZFx1MDAyNnRpdGxlPU5ld1x1MDAyQkRvY3VtZW50IiwiY3VzdG9taXphdGlvbiI6eyJhYm91dCI6ZmFsc2UsImN1c3RvbWVyIjp7ImFkZHJlc3MiOiIyMEEtNiBFcm5lc3RhIEJpcnpuaWVrYS1VcGlzaGEgc3RyZWV0LCBSaWdhLCBMYXR2aWEsIEVVLCBMVi0xMDUwIiwibG9nbyI6Imh0dHBzOi8vb2ZmaWNlLm15cGdlLmlkL3N0YXRpYy9pbWFnZXMvbG9nby9sb2dpbnBhZ2Uuc3ZnP2hhc2g9Mi41LjAuMTM5NCIsIm1haWwiOiJzdXBwb3J0QG9ubHlvZmZpY2UuY29tIiwibmFtZSI6IkFzY2Vuc2lvIFN5c3RlbSBTSUEiLCJ3d3ciOiJodHRwczovL3d3dy5vbmx5b2ZmaWNlLmNvbSJ9LCJmb3JjZXNhdmUiOnRydWUsImdvYmFjayI6eyJ1cmwiOiJodHRwczovL29mZmljZS5teXBnZS5pZC8jMSJ9LCJsb2dvIjp7ImltYWdlIjoiaHR0cHM6Ly9vZmZpY2UubXlwZ2UuaWQvc3RvcmFnZS93aGl0ZWxhYmVsL3Jvb3QvZG9jc2VkaXRvci5wbmc_aGFzaD04REM3NDk1REM1RkNFNUYiLCJpbWFnZURhcmsiOiJodHRwczovL29mZmljZS5teXBnZS5pZC9zdG9yYWdlL3doaXRlbGFiZWwvcm9vdC9kb2NzZWRpdG9yLnBuZz9oYXNoPThEQzc0OTVEQzVGQ0U1RiIsInVybCI6Imh0dHBzOi8vb2ZmaWNlLm15cGdlLmlkLyJ9LCJtZW50aW9uU2hhcmUiOnRydWUsInN1Ym1pdEZvcm0iOmZhbHNlfSwibGFuZyI6ImVuLVVTIiwibW9kZSI6ImVkaXQiLCJtb2RlV3JpdGUiOnRydWUsInBsdWdpbnMiOnsicGx1Z2luc0RhdGEiOltdfSwidGVtcGxhdGVzIjpbXSwidXNlciI6eyJpZCI6IjY2ZmFhNmU0LWYxMzMtMTFlYS1iMTI2LTAwZmZlZWM4YjRlZiIsIm5hbWUiOiJBZG1pbmlzdHJhdG9yICJ9fSwiZWRpdG9yVHlwZSI6MCwiZWRpdG9yVXJsIjoiaHR0cHM6Ly9vZmZpY2UubXlwZ2UuaWQvZHMtdnBhdGgvd2ViLWFwcHMvYXBwcy9hcGkvZG9jdW1lbnRzL2FwaS5qcyJ9.aFbBo4ANVjAVMSQnsLjPh4DMKoqhCSgrT0hzU2Ovj_U",
+  };
+
+  useEffect(() => {
+    const script = document.createElement("script");
+
+    script.setAttribute(
+      "src",
+      "https://office.mypge.id/static/scripts/sdk/1.0.0/api.js"
+    );
+    script.onload = () => (window as any).DocSpace.SDK.initFrame(config);
+
+    document.body.appendChild(script);
+  }, []);
+
   return (
-    <div className="bg-black min-h-screen w-full">
-      <OnlyOffice />
-    </div>
+    <>
+      <div id="ds-frame" className="min-h-screen w-full"></div>
+    </>
   );
 };
 
